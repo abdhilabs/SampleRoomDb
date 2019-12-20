@@ -8,24 +8,25 @@ import androidx.appcompat.app.AppCompatActivity
 import com.abdhilabs.learnroomdb.BaseApp.Companion.db
 import com.abdhilabs.learnroomdb.db.Todo
 import com.abdhilabs.learnroomdb.utils.Const.DATA_TASK
+import com.abdhilabs.learnroomdb.utils.toast
 import kotlinx.android.synthetic.main.activity_add_task.*
 
 class AddTaskActivity : AppCompatActivity() {
 
-    private lateinit var todo: Todo
+    private var todo: Todo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_task)
 
-        val data = intent.getParcelableExtra<Todo>(DATA_TASK)
+        todo = intent.getParcelableExtra(DATA_TASK)
 
-        if (data != null){
+        if (todo != null) {
             btnUpdateTask.visibility = View.VISIBLE
             btnAddTask.visibility = View.GONE
         }
 
-        getDataUpdate(data)
+        getDataUpdate(todo)
 
         btnAddTask.setOnClickListener {
             addTodo()
@@ -44,6 +45,15 @@ class AddTaskActivity : AppCompatActivity() {
     }
 
     private fun updateTodo() {
+        val id = todo!!.id
+        val title = et_add_title.text.toString()
+        val deadline = et_add_deadline.text.toString()
+        val desc = et_add_desc.text.toString()
+
+        db.taskDao().update(id, title, deadline, desc)
+        "Success Update Task".toast(this)
+        startActivity(Intent(this, MainActivity::class.java))
+        finish()
 
     }
 
@@ -54,7 +64,7 @@ class AddTaskActivity : AppCompatActivity() {
         val desc = et_add_desc.text.toString()
 
         if (title.isNotEmpty() && deadline.isNotEmpty() && desc.isNotEmpty()) {
-            todo = Todo(title, deadline, desc)
+            val todo = Todo(title, deadline, desc)
             db.taskDao().insertAll(todo)
             startActivity(Intent(this, MainActivity::class.java))
             finish()

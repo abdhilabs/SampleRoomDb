@@ -19,4 +19,7 @@ interface TodoDao {
 
     @Update
     fun updateTask(todo: Todo)
+
+    @Query("UPDATE todo SET title=:title, deadline=:deadline, description=:desc WHERE id=:id")
+    fun update(id: Long, title: String, deadline: String, desc: String)
 }

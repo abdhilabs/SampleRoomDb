@@ -48,12 +48,14 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddTaskActivity::class.java)
             intent.putExtra(DATA_TASK, todo)
             startActivity(intent)
+            dialogBuilder.dismiss()
         }
 
         dialogView.btn_dialog_delete.setOnClickListener {
             db.taskDao().deleteTask(todo)
             "Kamu berhasil hapus si ${todo.title}".toast(this)
             showList()
+            dialogBuilder.dismiss()
         }
 
         dialogBuilder.setView(dialogView)
